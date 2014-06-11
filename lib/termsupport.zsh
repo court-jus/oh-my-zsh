@@ -9,8 +9,10 @@
 function title {
   emulate -L zsh
   setopt prompt_subst
-
-  [[ "$EMACS" == *term* ]] && return
+  
+  if [[ "$DISABLE_AUTO_TITLE" == "true" ]] || [[ "$EMACS" == *term* ]]; then
+    return
+  fi
 
   # if $2 is unset use $1 as default
   # if it is set and empty, leave it as is
