@@ -24,7 +24,11 @@
 # hostname to whether the last call exited with an error to whether background
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
-
+#
+# (mca-95b40ea) gl@gl ⮀ ~/src/mca ⮀  fix6/35373 ● ⮀ echo "<2b80> ± <2b60> ➦ ✔ ✘ ⚡"
+#   ⮀ ± ⭠ ➦ ✔ ✘ ⚡
+#
+#
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
@@ -46,6 +50,8 @@ CURRENT_BG='NONE'
   # Do not change this! Do not make it '\u2b80'; that is the old, wrong code point.
   SEGMENT_SEPARATOR=$'\ue0b0'
 }
+
+SEGMENT_SEPARATOR='⮀'
 
 # Begin a segment
 # Takes two arguments, background and foreground. Both can be omitted,
@@ -112,6 +118,12 @@ prompt_git() {
       mode=" >R>"
     fi
 
+    gitstatus=""
+    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l | tr -s ' ')
+    (( $ahead )) && gitstatus+=" ${c3}+${ahead}${c2}"
+    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l | tr -s ' ')
+    (( $behind )) && gitstatus+=" ${c4}-${behind}${c2}"
+
     setopt promptsubst
     autoload -Uz vcs_info
 
@@ -123,7 +135,7 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    echo -n "${ref/refs\/heads\//⭠ }${vcs_info_msg_0_%% }${mode}${gitstatus}"
   fi
 }
 
